@@ -1,11 +1,18 @@
 name: "Build"
-on: 
+on:
   [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
     - run: |
         npm i
         npm run all
+    - name: Upload coverage reports to Codecov
+      if: always()
+      uses: codecov/codecov-action@v3

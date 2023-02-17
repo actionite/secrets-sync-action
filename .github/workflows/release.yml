@@ -1,15 +1,20 @@
 name: "Release"
-on: 
+on:
   push:
     branches:
-      - master
+      - main
+
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with: 
-        ref: 'master'
+    - uses: actions/checkout@v3
+      with:
+        ref: main
     - name: Keep dist up-to-date
       run: |
         npm i
@@ -20,33 +25,34 @@ jobs:
         git add dist/index.js
         git commit -m "chore: publish dist" || echo "nothing to commit"
         git push origin master
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
-        ref: master
+        ref: main
     - name: Test Action
       uses: ./
-      with: 
+      with:
         SECRETS: |
           ^FOO$
           ^GITHUB_.*
         REPOSITORIES: |
-          ^jpoehnelt/nodelete$
+          ^nathanklick/SnowWhite.NET$
         DRY_RUN: true
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_NO_SCOPES }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN_NO_SCOPES }}
+        NEW_SECRET_PREFIX: "TEST_ACTION_"
       env:
         FOO: ${{github.run_id}}
         FOOBAR: BAZ
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
-        ref: master 
+        ref: master
     - name: Semantic Release
-      uses: cycjimmy/semantic-release-action@v2
+      uses: cycjimmy/semantic-release-action@v3
       with:
         extra_plugins: |
           "@semantic-release/commit-analyzer"
           "@semantic-release/release-notes-generator"
-          "@semantic-release/git
-          "@semantic-release/github
+          "@semantic-release/git"
+          "@semantic-release/github"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
