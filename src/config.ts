@@ -27,6 +27,7 @@ export interface Config {
   CONCURRENCY: number;
   RUN_DELETE: boolean;
   ENVIRONMENT: string;
+  NEW_SECRET_PREFIX: string;
 }
 
 export function getConfig(): Config {
@@ -52,6 +53,7 @@ export function getConfig(): Config {
       core.getInput("DELETE", { required: false }).toLowerCase()
     ),
     ENVIRONMENT: core.getInput("ENVIRONMENT", { required: false }),
+    NEW_SECRET_PREFIX: core.getInput("NEW_SECRET_PREFIX", { required: false }),
   };
 
   if (config.DRY_RUN) {

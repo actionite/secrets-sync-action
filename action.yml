@@ -2,7 +2,7 @@
 name: "Secrets Sync Action"
 author: Justin Poehnelt
 branding:
-  icon: 'copy'  
+  icon: 'copy'
   color: 'red'
 description: "Copies secrets from the action's environment to many other repos."
 inputs:
@@ -61,6 +61,11 @@ inputs:
     description: |
       If this value is set, the action will set the secrets to the repositories 
       environment with the name of this value.
+    required: false
+  new_secret_prefix:
+    default: ""
+    description: |
+      If this value is set, the action will prefix the secret name with this value.
     required: false
 runs:
   using: 'node16'

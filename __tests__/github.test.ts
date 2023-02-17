@@ -18,12 +18,12 @@ import * as config from "../src/config";
 
 import {
   DefaultOctokit,
+  deleteSecretForRepo,
   filterReposByPatterns,
-  listAllMatchingRepos,
   getRepos,
+  listAllMatchingRepos,
   publicKeyCache,
   setSecretForRepo,
-  deleteSecretForRepo,
 } from "../src/github";
 
 // @ts-ignore-next-line
@@ -41,6 +41,7 @@ beforeAll(() => {
     REPOSITORIES_LIST_REGEX: true,
     DRY_RUN: false,
     RETRIES: 3,
+    NEW_SECRET_PREFIX: "",
   });
 
   octokit = DefaultOctokit({
@@ -153,18 +154,18 @@ describe("setSecretForRepo", () => {
   });
 
   test("setSecretForRepo should retrieve public key", async () => {
-    await setSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", true);
+    await setSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", "", true);
     expect(publicKeyMock.isDone()).toBeTruthy();
   });
 
   test("setSecretForRepo should not set secret with dry run", async () => {
-    await setSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", true);
+    await setSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", "", true);
     expect(publicKeyMock.isDone()).toBeTruthy();
     expect(setSecretMock.isDone()).toBeFalsy();
   });
 
   test("setSecretForRepo should call set secret endpoint", async () => {
-    await setSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", false);
+    await setSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", "", false);
     expect(nock.isDone()).toBeTruthy();
   });
 });
@@ -214,6 +215,7 @@ describe("setSecretForRepo with environment", () => {
       secrets.FOO,
       repo,
       repoEnvironment,
+      "",
       true
     );
     expect(environmentPublicKeyMock.isDone()).toBeTruthy();
@@ -226,6 +228,7 @@ describe("setSecretForRepo with environment", () => {
       secrets.FOO,
       repo,
       repoEnvironment,
+      "",
       true
     );
     expect(environmentPublicKeyMock.isDone()).toBeTruthy();
@@ -239,6 +242,7 @@ describe("setSecretForRepo with environment", () => {
       secrets.FOO,
       repo,
       repoEnvironment,
+      "",
       false
     );
     expect(nock.isDone()).toBeTruthy();
@@ -261,12 +265,12 @@ describe("deleteSecretForRepo", () => {
   });
 
   test("deleteSecretForRepo should not delete secret with dry run", async () => {
-    await deleteSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", true);
+    await deleteSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", "", true);
     expect(deleteSecretMock.isDone()).toBeFalsy();
   });
 
   test("deleteSecretForRepo should call set secret endpoint", async () => {
-    await deleteSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", false);
+    await deleteSecretForRepo(octokit, "FOO", secrets.FOO, repo, "", "", false);
     expect(nock.isDone()).toBeTruthy();
   });
 });
@@ -297,6 +301,7 @@ describe("deleteSecretForRepo with environment", () => {
       secrets.FOO,
       repo,
       repoEnvironment,
+      "",
       true
     );
     expect(deleteSecretMock.isDone()).toBeFalsy();
@@ -309,6 +314,7 @@ describe("deleteSecretForRepo with environment", () => {
       secrets.FOO,
       repo,
       repoEnvironment,
+      "",
       false
     );
     expect(nock.isDone()).toBeTruthy();
